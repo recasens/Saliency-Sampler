@@ -13,9 +13,7 @@ import torchvision.models as models
 import torch.nn.functional as F
 import torchvision.utils as vutils
 import torchvision.models as models
-from resnet_zoomnet227_3layer import resnet18
 import numpy as np
-from resnet import resnet101
 import random
 
 
@@ -40,31 +38,34 @@ def makeGaussian(size, fwhm = 3, center=None):
     return np.exp(-4*np.log(2) * ((x-x0)**2 + (y-y0)**2) / fwhm**2)
 
 
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.hi_res = resnet101()
+class Saliency_Sampler(nn.Module):
+    def __init__(self,task_network,saliency_network,task_input_size,saliency_input_size):
+        super(Saliency_Sampler, self).__init__()
+        
+        self.hi_res = task_network
         self.grid_size = 31
         self.padding_size = 30
         self.global_size = self.grid_size+2*self.padding_size
-        self.input_size = 224
-        self.input_size_net = 224
+        self.input_size = saliency_input_size
+        self.input_size_net = task_input_size
         self.conv_last = nn.Conv2d(256,1,kernel_size=1,padding=0,stride=1)
         gaussian_weights = torch.FloatTensor(makeGaussian(2*self.padding_size+1, fwhm = 13))
-        print(gaussian_weights)
 
         # Spatial transformer localization-network
-        self.localization = resnet18(pretrained=True)
+        self.localization = saliency_network
         self.filter = nn.Conv2d(1, 1, kernel_size=(2*self.padding_size+1,2*self.padding_size+1),bias=False)
         self.filter.weight[0].data[:,:,:] = gaussian_weights
 
-    def create_grid(self, x):
-        P = torch.autograd.Variable(torch.zeros(x.size(0),2,self.grid_size+2*self.padding_size, self.grid_size+2*self.padding_size).cuda(),requires_grad=False)
-
+        self.P_basis = torch.zeros(2,self.grid_size+2*self.padding_size, self.grid_size+2*self.padding_size)
         for k in range(2):
             for i in range(self.global_size):
                 for j in range(self.global_size):
-                    P[:,k,i,j] = k*(i-self.padding_size)/(self.grid_size-1+1e-12)+(1-k)*(j-self.padding_size)/(self.grid_size-1)+1e-12
+                    self.P_basis[k,i,j] = k*(i-self.padding_size)/(self.grid_size-1.0)+(1.0-k)*(j-self.padding_size)/(self.grid_size-1.0)
+
+    def create_grid(self, x):
+        P = torch.autograd.Variable(torch.zeros(1,2,self.grid_size+2*self.padding_size, self.grid_size+2*self.padding_size).cuda(),requires_grad=False)
+        P[0,:,:,:] = self.P_basis
+        P = P.expand(x.size(0),2,self.grid_size+2*self.padding_size, self.grid_size+2*self.padding_size)
 
 
         x_cat = torch.cat((x,x),1)
@@ -112,6 +113,7 @@ class Net(nn.Module):
         grid = self.create_grid(xs_hm)
 
         x_sampled = F.grid_sample(x, grid)
+
         if random.random()>p:
             s = random.randint(64, 224)
             x_sampled = nn.AdaptiveAvgPool2d((s,s))(x_sampled)
