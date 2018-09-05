@@ -6,7 +6,7 @@ This is the official PyTorch implementation of the paper [Learning to Zoom: a Sa
 </div>
 
 
-The paper presents a saliency-based distortion layer for convolutional neural networks that helps to improve the spatial sampling of input data for a given task. For instance, for the eye-tracking task and the fine-grain classification task, the layer produces deformed images such as:
+The paper presents a saliency-based distortion layer for convolutional neural networks that helps to improve the spatial sampling of input data for a given task. For instance, for the gaze-tracking task and the fine-grained classification task, the layer produces deformed images such as:
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/recasens/Saliency-Sampler/master/images/augmentation_image.png" height="160px">
@@ -14,10 +14,10 @@ The paper presents a saliency-based distortion layer for convolutional neural ne
 
 
 ## Requirements
-The implementation has been tested wihth PyTorch 0.4.0 but it is likely to work on previous version of PyTorch as well. 
+The implementation has been tested with PyTorch 0.4.0 but it is likely to work on previous versions of PyTorch as well. 
 
 ## Usage
-To add a Saliency Sampler layer at the begging of your model, you just need to define a task network and a saliency network and instanciate the model as:
+To add a Saliency Sampler layer at the beginning of your model, you just need to define a task network and a saliency network and instantiate the model as:
 ```
 task_network = resnet101()
 saliency_network = saliency_network_resnet18()
