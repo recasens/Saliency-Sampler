@@ -1,12 +1,16 @@
 ## Saliency-Sampler
-This is the official PyTorch implementation of the paper [Learning to Zoom: a Saliency-Based Sampling Layer for Neural Networks](http://openaccess.thecvf.com/content_ECCV_2018/papers/Adria_Recasens_Learning_to_Zoom_ECCV_2018_paper.pdf) by Adrià Recasens*, Petr Kellnhofer*, Simon Stent, Wojciech Matusik and Antonio Torralba.
+This is the official PyTorch implementation of the paper [Learning to Zoom: a Saliency-Based Sampling Layer for Neural Networks](http://openaccess.thecvf.com/content_ECCV_2018/papers/Adria_Recasens_Learning_to_Zoom_ECCV_2018_paper.pdf) by: 
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/recasens/Saliency-Sampler/master/images/author_list.png" height="160px">
+</div>
 
 The paper presents a saliency-based distortion layer for convolutional neural networks that helps to improve the spatial sampling of input data for a given task.
 
 For instance, for the eye-tracking task and the fine-grain classification task, the layer produces deformed images such as:
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/recasens/Saliency-Sampler/master/images/augmentation_image.png" height="200px">
+<img src="https://raw.githubusercontent.com/recasens/Saliency-Sampler/master/images/augmentation_image.png" height="160px">
 </div>
 
 
