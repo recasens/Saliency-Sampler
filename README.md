@@ -17,7 +17,7 @@ The paper presents a saliency-based distortion layer for convolutional neural ne
 The implementation has been tested wihth PyTorch 0.4.0 but it is likely to work on previous version of PyTorch as well. 
 
 ## Usage
-To add a Saliency Sampler layer at the begging of your model, you just need to define a task network and a saliency network and instanciate the model as:
+To add a Saliency Sampler layer at the beginning of your model, you just need to define a task network and a saliency network and instantiate the model as:
 ```
 task_network = resnet101()
 saliency_network = saliency_network_resnet18()
